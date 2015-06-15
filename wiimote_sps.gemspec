@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'wiimote_sps'
-  s.version = '0.1.0'
+  s.version = '0.1.1'
   s.summary = 'Uses a Wiimote to publish key presses to a SimplePubSub broker.'
   s.authors = ['James Robertson']
   s.files = Dir['lib/wiimote_sps.rb']
