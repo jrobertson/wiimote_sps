@@ -38,16 +38,42 @@ class WiimoteSps < SimpleWiimote
     when /rumble$/
      
       case msg
-      when /^buzz/
-        self.rumble = true
-        sleep 0.3
-        self.rumble = false
+      when /^(buzz|vibrate|rumble|duration)/
+        
+        r = msg.match(/duration\s([\d\.]+)/)
+        
+        duration = r ? r.captures.first.to_f : 0.3
+        
+        self.rumble = true;  sleep duration;  self.rumble = false
+        
       end      
 
     when /led$/
-      case msg
-      when /(\d+)\s+(on|off)/
-        self.led = ($2) == 'on' ? 1 : 0
+
+      r = msg.match(/(\d+)\s*(on|off|blink|stop)\s*([\d\.]+)?(?:\s*duration\s)?([\d\.]+)?/)
+
+      if r then
+        index, state, seconds, raw_duration = r.captures
+        duration = raw_duration ? raw_duration.to_f : nil
+
+        a = case state
+
+          when 'on'
+            [:on, duration]
+
+          when 'off'
+            [:off]
+            
+          when 'blink'
+            seconds = seconds ? seconds.to_f : 0.5
+            [:blink, seconds, duration: duration]
+            
+          when 'stop'
+            [:off]
+
+        end
+
+        @led[index.to_i].send(*a)
       end
     end   
   end     
