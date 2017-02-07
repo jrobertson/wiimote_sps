@@ -2,7 +2,7 @@
 
 # file: wiimote_sps.rb
 
-require 'sps-pub'
+
 require 'sps-sub'
 require 'simple_wiimote'
 
@@ -14,9 +14,8 @@ class WiimoteSps < SimpleWiimote
     raise 'WiimoteSps: Please provide a SPS addres' unless sps_address
     super()
     @device_id = device_id
-    @pub = SPSPub.new address: sps_address
-    @sub = SPSSub.new address: sps_address, callback: self
 
+    @pub = @sub = SPSSub.new address: sps_address, callback: self
 
     @pub.notice @device_id + '/info: wiimote initialized'
 
