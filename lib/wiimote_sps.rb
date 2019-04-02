@@ -9,11 +9,13 @@ require 'simple_wiimote'
 
 class WiimoteSps < SimpleWiimote
 
-  def initialize(device_id: 'wiimote', sps_address: nil, sps_port: 59000)
+  def initialize(device_id: 'wiimote', sps_address: nil, sps_port: 59000, 
+                 led_xor: true)
 
     raise 'WiimoteSps: Please provide a SPS addres' unless sps_address
     super()
-    @device_id = device_id
+    
+    @device_id, @led_xor = device_id, led_xor
 
     @pub = @sub = SPSSub.new address: sps_address, callback: self
 
@@ -71,8 +73,9 @@ class WiimoteSps < SimpleWiimote
             [:off]
 
         end
-
-        @led[index.to_i].send(*a)
+        
+        @led.each {|x| x.send :off} if @led_xor
+        @led[index.to_i].send(*a) if index.to_i < @led.length
       end
     end   
   end     
